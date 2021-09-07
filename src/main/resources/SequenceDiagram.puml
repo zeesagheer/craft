@@ -1,0 +1,75 @@
+@startuml
+autonumber
+
+actor app order 0
+
+participant "Profile Validation\nService" as pvs order 10
+participant Thread as t order 20
+participant Thread as t1 order 21
+participant "Subscription\nService" as ss order 25
+database DynamoDB as db order 30
+database Redis as redis order 35
+participant "QB-Accounting" as s1 order 40
+participant "QB-Payroll" as s2 order 50
+participant "QB-Payments" as s3 order 60
+participant "TSheets" as s4 order 70
+
+rnote over app
+    User started journey
+    from any subscribed product
+end note
+
+app -> pvs ++ : /updateProfile
+    pvs -> pvs : create profile\nvalidation task\nin PENDING state
+    pvs -> db ++ : save task
+    return ok
+    pvs -> t **: async
+return accepted [202] (**txnId**)
+== scheduler flow start ==
+pvs -> db : fetch all tasks in PENDING state
+return list of tasks
+loop task in tasks
+
+end
+pvs -> t :
+== scheduler flow end ==
+t -> ss ++ : getProfileForUser(ProfileID)
+return result
+alt result.error == "Profile does not exist"
+    t -> db ++ : mark **PROFILE_NOT_FOUND**
+    return ok
+else result == SubscriptionsList
+    t -> t : createValidatorRows\nand update\ninternalStatus = "ROWS_CREATED"
+    t -> db ++ : save Validator Rows\nand update internalStatus
+    return ok
+    loop Subscription in SubscriptionsList
+        t -> t1 **: async
+    end
+end
+
+t1 -> s1 ++ : /validateProfile
+return result
+alt network error / exception in s1 response
+    t1 -> db ++ : mark validatorRow.status = **ERROR**
+    return ok
+else result == true/false
+    t1 -> db ++ : mark validatorRow.status = result
+    return ok
+end
+
+alt if all sub validator rows are true
+    t -> db ++ : mark profile task status = **VALIDATION_SUCCESSFUL**
+    return ok
+else if one of sub validator rows has false status
+    t -> db ++ : mark profile task status = **VALIDATION_FAILED**
+    return ok
+end
+
+
+app -> pvs ++ : /find/status [**txnId**]
+    pvs -> db ++ : save
+    return ok
+return accepted [202]
+
+
+@enduml

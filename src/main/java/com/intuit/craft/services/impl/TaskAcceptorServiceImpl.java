@@ -14,6 +14,7 @@ import com.intuit.craft.repositories.ProfileValidationTaskRepository;
 import com.intuit.craft.services.ProfileValidationService;
 import com.intuit.craft.services.TaskAcceptorService;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -41,6 +42,7 @@ public class TaskAcceptorServiceImpl implements TaskAcceptorService {
     }
 
     @Override
+    @Cacheable(value = "calculatedStatusCache", unless = "#result.status.name == \"IN_PROGRESS\"")
     public ValidationResult getProfileValidationTaskStatus(String requestId) {
         Optional<ProfileValidationTask> profile = profileValidationTaskRepository.findById(requestId);
         ValidationTaskStatus taskStatus = profile.orElseThrow(() -> new ProfileValidationServiceException(ResponseCode.VALIDATION_TASK_NOT_FOUND, requestId))

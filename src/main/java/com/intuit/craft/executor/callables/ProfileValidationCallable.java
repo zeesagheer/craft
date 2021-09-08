@@ -1,5 +1,6 @@
 package com.intuit.craft.executor.callables;
 
+import com.intuit.craft.dto.ValidationResult;
 import com.intuit.craft.entities.ProfileValidationSubTask;
 import com.intuit.craft.services.SubscribedProfileValidationService;
 import lombok.AllArgsConstructor;
@@ -10,18 +11,19 @@ import java.util.concurrent.Callable;
 
 @AllArgsConstructor
 @Slf4j
-public class ProfileValidationCallable implements Callable<Boolean> {
+public class ProfileValidationCallable implements Callable<ValidationResult> {
 
     private final ProfileValidationSubTask profileValidationSubTask;
     private final SubscribedProfileValidationService subscribedProfileValidationService;
 
     @Override
-    public Boolean call() {
+    public ValidationResult call() {
+        ValidationResult validationResult = null;
         try {
-            return subscribedProfileValidationService.validate(profileValidationSubTask);
+            validationResult = subscribedProfileValidationService.validate(profileValidationSubTask);
         } catch (SocketTimeoutException e) {
             log.error("Exception while validating subTask {}", profileValidationSubTask, e);
-            return null;
         }
+        return validationResult;
     }
 }

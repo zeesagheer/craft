@@ -25,14 +25,17 @@ app -> pvs ++ : /updateProfile
     return ok
     pvs -> t **: async
 return accepted [202] (**txnId**)
+
+
 == scheduler flow start ==
 pvs -> db : fetch all tasks in PENDING state
 return list of tasks
 loop task in tasks
-
+    pvs -> t :
 end
-pvs -> t :
 == scheduler flow end ==
+
+
 t -> ss ++ : getProfileForUser(ProfileID)
 return result
 alt result.error == "Profile does not exist"

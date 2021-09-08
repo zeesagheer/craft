@@ -2,7 +2,9 @@ package com.intuit.craft.services.impl;
 
 import com.intuit.craft.builder.ProfileValidationSubTaskBuilder;
 import com.intuit.craft.dto.UserSubscription;
+import com.intuit.craft.dto.ValidationResult;
 import com.intuit.craft.dto.ValidationTaskStatus;
+import com.intuit.craft.dto.ValidationTaskSubStatus;
 import com.intuit.craft.entities.ProfileValidationSubTask;
 import com.intuit.craft.entities.ProfileValidationTask;
 import com.intuit.craft.executor.callables.ProfileValidationCallable;
@@ -54,15 +56,16 @@ public class ProfileValidationServiceImpl implements ProfileValidationService {
 
         if (ValidationTaskStatus.IN_PROGRESS.equals(profileTask.getStatus())) {
             if (null == profileValidationSubTaskList) {
-                profileValidationSubTaskList = profileValidationSubTaskRepository.findAllByParentTaskId(profileTask.getProfileId());
+                profileValidationSubTaskList = profileValidationSubTaskRepository
+                        .findAllByParentTaskId(profileTask.getProfileId());
             }
             try {
-                List<Future<Boolean>> futures = executorService.invokeAll(
+                List<Future<ValidationResult>> futures = executorService.invokeAll(
                         profileValidationSubTaskList.stream()
                                 .map(p -> new ProfileValidationCallable(p, subscribedProfileValidationService))
                                 .collect(Collectors.toList())
                         , 30000, TimeUnit.MILLISECONDS);
-                List<Boolean> listResult = futures.stream().map(future -> {
+                List<ValidationResult> listResult = futures.stream().map(future -> {
                     try {
                         return future.get();
                     } catch (InterruptedException | ExecutionException e) {
@@ -71,10 +74,12 @@ public class ProfileValidationServiceImpl implements ProfileValidationService {
                     }
                 }).filter(Objects::nonNull).collect(Collectors.toList());
                 if (listResult.size() == futures.size()) {
-                    profileTask.setStatus(listResult.stream().anyMatch(item -> item == Boolean.FALSE)
+                    profileTask.setStatus(listResult.stream().anyMatch(validationResult
+                            -> ValidationTaskSubStatus.INVALID.equals(validationResult.getStatus()))
                             ? ValidationTaskStatus.INVALID : ValidationTaskStatus.VALID);
                     profileValidationTaskRepository.save(profileTask);
-                    log.info("Marking task {} for profile {} as {}", profileTask.getId(), profileTask.getProfileId(), profileTask.getStatus());
+                    log.info("Marking task {} for profile {} as {}", profileTask.getId(), profileTask.getProfileId()
+                            , profileTask.getStatus());
                 }
             } catch (InterruptedException e) {
                 log.error("Error while validating task {}", profileTask, e);

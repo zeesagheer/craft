@@ -1,5 +1,6 @@
 package com.intuit.craft.services.impl;
 
+import com.intuit.craft.dto.ValidationResult;
 import com.intuit.craft.dto.ValidationTaskSubStatus;
 import com.intuit.craft.entities.ProfileValidationSubTask;
 import com.intuit.craft.repositories.ProfileValidationSubTaskRepository;
@@ -23,7 +24,7 @@ public class SubscribedProfileValidationServiceImpl implements SubscribedProfile
             , "tax info is incorrect");
 
     @Override
-    public Boolean validate(ProfileValidationSubTask profileValidationSubTask) throws SocketTimeoutException {
+    public ValidationResult validate(ProfileValidationSubTask profileValidationSubTask) throws SocketTimeoutException {
         sleepForOneSecond();
         if (!getRandomTrueWithPercent(90)) {
             throw new SocketTimeoutException();
@@ -36,7 +37,7 @@ public class SubscribedProfileValidationServiceImpl implements SubscribedProfile
 
         profileValidationSubTaskRepository.save(profileValidationSubTask);
         log.info("Subtask id {} status is {}", profileValidationSubTask.getId(), profileValidationSubTask.getStatus());
-        return result;
+        return new ValidationResult(profileValidationSubTask.getStatus(), profileValidationSubTask.getReason());
     }
 
     private String getRandomReason() {

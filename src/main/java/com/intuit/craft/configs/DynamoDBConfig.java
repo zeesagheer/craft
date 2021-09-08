@@ -1,4 +1,4 @@
-package com.intuit.craft;
+package com.intuit.craft.configs;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -25,10 +25,9 @@ public class DynamoDBConfig {
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
-        AmazonDynamoDB amazonDynamoDB
-                = new AmazonDynamoDBClient(amazonAWSCredentials());
+        AmazonDynamoDB amazonDynamoDB = new AmazonDynamoDBClient(amazonAWSCredentials());
 
-        if (!StringUtils.isEmpty(amazonDynamoDBEndpoint)) {
+        if (StringUtils.hasText(amazonDynamoDBEndpoint)) {
             amazonDynamoDB.setEndpoint(amazonDynamoDBEndpoint);
         }
 
@@ -37,7 +36,6 @@ public class DynamoDBConfig {
 
     @Bean
     public AWSCredentials amazonAWSCredentials() {
-        return new BasicAWSCredentials(
-                amazonAWSAccessKey, amazonAWSSecretKey);
+        return new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey);
     }
 }

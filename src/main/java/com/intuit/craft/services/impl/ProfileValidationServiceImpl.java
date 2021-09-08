@@ -1,8 +1,8 @@
 package com.intuit.craft.services.impl;
 
-import com.intuit.craft.builder.ProfileValidationSubTaskBuilder;
+import com.intuit.craft.convertor.Convertor;
 import com.intuit.craft.dto.UserSubscription;
-import com.intuit.craft.dto.ValidationResult;
+import com.intuit.craft.dto.SubValidationResult;
 import com.intuit.craft.dto.ValidationTaskStatus;
 import com.intuit.craft.dto.ValidationTaskSubStatus;
 import com.intuit.craft.entities.ProfileValidationSubTask;
@@ -15,7 +15,6 @@ import com.intuit.craft.services.SubscribedProfileValidationService;
 import com.intuit.craft.services.UserSubscriptionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,12 +24,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor
 public class ProfileValidationServiceImpl implements ProfileValidationService {
     private final ProfileValidationTaskRepository profileValidationTaskRepository;
     private final ProfileValidationSubTaskRepository profileValidationSubTaskRepository;
     private final UserSubscriptionService userSubscriptionService;
-    private final ProfileValidationSubTaskBuilder profileValidationSubTaskBuilder;
+    private final Convertor<UserSubscription, ProfileValidationSubTask> profileValidationSubTaskConvertor;
     private final ExecutorService executorService = Executors.newWorkStealingPool();
     private final SubscribedProfileValidationService subscribedProfileValidationService;
 
@@ -45,9 +44,7 @@ public class ProfileValidationServiceImpl implements ProfileValidationService {
                 profileValidationTaskRepository.save(profileTask);
                 return;
             }
-            profileValidationSubTaskList = subscriptionsList.stream()
-                    .map(profileValidationSubTaskBuilder::build)
-                    .collect(Collectors.toList());
+            profileValidationSubTaskList = profileValidationSubTaskConvertor.convert(subscriptionsList);
             profileValidationSubTaskList.forEach(item -> item.setParentTaskId(profileTask.getId()));
             profileValidationSubTaskRepository.saveAll(profileValidationSubTaskList);
             profileTask.setStatus(ValidationTaskStatus.IN_PROGRESS);
@@ -60,12 +57,12 @@ public class ProfileValidationServiceImpl implements ProfileValidationService {
                         .findAllByParentTaskId(profileTask.getProfileId());
             }
             try {
-                List<Future<ValidationResult>> futures = executorService.invokeAll(
+                List<Future<SubValidationResult>> futures = executorService.invokeAll(
                         profileValidationSubTaskList.stream()
                                 .map(p -> new ProfileValidationCallable(p, subscribedProfileValidationService))
                                 .collect(Collectors.toList())
                         , 30000, TimeUnit.MILLISECONDS);
-                List<ValidationResult> listResult = futures.stream().map(future -> {
+                List<SubValidationResult> listResult = futures.stream().map(future -> {
                     try {
                         return future.get();
                     } catch (InterruptedException | ExecutionException e) {

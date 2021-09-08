@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @ToString
 @Getter
 public enum ResponseCode {
-    REQUEST_FLOODING(8000, HttpStatus.INTERNAL_SERVER_ERROR, "Multiple request with same data. Please try again!");
+    VALIDATION_TASK_NOT_FOUND(400, HttpStatus.BAD_REQUEST, "Profile with id = %s not found");
 
     private final int code;
     private final HttpStatus httpStatus;

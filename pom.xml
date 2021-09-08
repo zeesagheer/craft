@@ -15,13 +15,16 @@
     <description>Demo project for Intuit Craft Profile Validation Microservice</description>
     <properties>
         <java.version>1.8</java.version>
+        <releasetrain.version>Lovelace-SR16</releasetrain.version>
+        <java.sdk.dynamodb.version>1.11.64</java.sdk.dynamodb.version>
+        <spring.data.dynamodb.version>5.1.0</spring.data.dynamodb.version>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-releasetrain</artifactId>
-                <version>Lovelace-SR16</version>
+                <version>${releasetrain.version}</version>
                 <type>pom</type>
             </dependency>
         </dependencies>
@@ -30,12 +33,12 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.11.64</version>
+            <version>${java.sdk.dynamodb.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.derjust</groupId>
             <artifactId>spring-data-dynamodb</artifactId>
-            <version>5.1.0</version>
+            <version>${spring.data.dynamodb.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

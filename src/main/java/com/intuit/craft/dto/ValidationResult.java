@@ -1,11 +1,12 @@
 package com.intuit.craft.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-@AllArgsConstructor
 public class ValidationResult {
-    ValidationTaskSubStatus status;
-    String reason;
+    private ValidationTaskStatus status;
+    private String displayStatus;
+    private List<String> reasons;
 }

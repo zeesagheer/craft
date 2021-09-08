@@ -1,9 +1,9 @@
 package com.intuit.craft.services;
 
 
-import com.intuit.craft.builder.ProfileValidationSubTaskBuilder;
+import com.intuit.craft.convertor.ProfileValidationSubTaskConvertor;
 import com.intuit.craft.dto.UserSubscription;
-import com.intuit.craft.dto.ValidationResult;
+import com.intuit.craft.dto.SubValidationResult;
 import com.intuit.craft.dto.ValidationTaskStatus;
 import com.intuit.craft.dto.ValidationTaskSubStatus;
 import com.intuit.craft.entities.ProfileValidationSubTask;
@@ -38,8 +38,8 @@ public class ProfileValidationServiceTest {
     @TestConfiguration
     static class ProfileValidationServiceTestContextConfiguration {
         @Bean
-        public ProfileValidationSubTaskBuilder getProfileValidationSubTaskBuilder() {
-            return new ProfileValidationSubTaskBuilder();
+        public ProfileValidationSubTaskConvertor getProfileValidationSubTaskBuilder() {
+            return new ProfileValidationSubTaskConvertor();
         }
     }
 
@@ -54,7 +54,7 @@ public class ProfileValidationServiceTest {
 
     @Autowired
     @Spy
-    private ProfileValidationSubTaskBuilder profileValidationSubTaskBuilder;
+    private ProfileValidationSubTaskConvertor profileValidationSubTaskConvertor;
 
 
     @Mock
@@ -106,7 +106,7 @@ public class ProfileValidationServiceTest {
         when(subscribedProfileValidationService.validate(any(ProfileValidationSubTask.class))).thenAnswer(answer -> {
             ProfileValidationSubTask task = answer.getArgument(0);
             if ("service1".equals(task.getServiceId())) {
-                return new ValidationResult(ValidationTaskSubStatus.VALID, "any random reason");
+                return new SubValidationResult(ValidationTaskSubStatus.VALID, "any random reason");
             }
             return null;
         });
@@ -129,9 +129,9 @@ public class ProfileValidationServiceTest {
         when(subscribedProfileValidationService.validate(any(ProfileValidationSubTask.class))).thenAnswer(answer -> {
             ProfileValidationSubTask task = answer.getArgument(0);
             if ("service1".equals(task.getServiceId())) {
-                return new ValidationResult(ValidationTaskSubStatus.INVALID, "any random reason");
+                return new SubValidationResult(ValidationTaskSubStatus.INVALID, "any random reason");
             } else {
-                return new ValidationResult(ValidationTaskSubStatus.VALID, null);
+                return new SubValidationResult(ValidationTaskSubStatus.VALID, null);
             }
         });
 
@@ -151,7 +151,7 @@ public class ProfileValidationServiceTest {
         when(userSubscriptionService.getSubscriptions(any(String.class))).thenReturn(subscriptions);
 
         when(subscribedProfileValidationService.validate(any(ProfileValidationSubTask.class)))
-                .thenAnswer(answer -> new ValidationResult(ValidationTaskSubStatus.VALID, null));
+                .thenAnswer(answer -> new SubValidationResult(ValidationTaskSubStatus.VALID, null));
 
         profileValidationService.validate(profileTask);
 

@@ -1,47 +1,59 @@
 package com.intuit.craft.services.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.intuit.craft.builder.ProfileValidationTaskBuilder;
+import com.intuit.craft.convertor.Convertor;
+import com.intuit.craft.dto.ValidationResult;
+import com.intuit.craft.dto.ValidationTaskStatus;
+import com.intuit.craft.dto.ValidationTaskSubStatus;
 import com.intuit.craft.dto.request.ProfileRequest;
+import com.intuit.craft.entities.ProfileValidationSubTask;
 import com.intuit.craft.entities.ProfileValidationTask;
+import com.intuit.craft.exceptions.ProfileValidationServiceException;
+import com.intuit.craft.exceptions.ResponseCode;
+import com.intuit.craft.repositories.ProfileValidationSubTaskRepository;
 import com.intuit.craft.repositories.ProfileValidationTaskRepository;
 import com.intuit.craft.services.ProfileValidationService;
 import com.intuit.craft.services.TaskAcceptorService;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Service
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor
 public class TaskAcceptorServiceImpl implements TaskAcceptorService {
 
     private final ProfileValidationTaskRepository profileValidationTaskRepository;
-    private final ProfileValidationTaskBuilder profileValidationTaskBuilder;
+    private final ProfileValidationSubTaskRepository profileValidationSubTaskRepository;
+    private final Convertor<ProfileRequest, ProfileValidationTask> profileValidationTaskConvertor;
     private final ProfileValidationService profileValidationService;
     private final ExecutorService executorService = Executors.newWorkStealingPool();
 
     @Override
     public String createProfileValidationTask(ProfileRequest request) {
-        try {
-            ProfileValidationTask profileTask = profileValidationTaskBuilder.build(request);
-            profileValidationTaskRepository.save(profileTask);
-            executorService.execute(() -> profileValidationService.validate(profileTask));
-            return profileTask.getId();
-        } catch (JsonProcessingException e) {
-            log.error("Error while parsing request {} ", request, e);
-            throw new RuntimeException("Error while parsing request");
-        }
+        ProfileValidationTask profileTask = profileValidationTaskConvertor.convert(request);
+        profileValidationTaskRepository.save(profileTask);
+        executorService.execute(() -> profileValidationService.validate(profileTask));
+        return profileTask.getId();
     }
 
     @Override
-    public String getProfileValidationTaskStatus(String requestId) {
+    public ValidationResult getProfileValidationTaskStatus(String requestId) {
         Optional<ProfileValidationTask> profile = profileValidationTaskRepository.findById(requestId);
-        return profile.orElseThrow(() -> new RuntimeException("Not found")).getStatus().getDisplayStatus();
+        ValidationTaskStatus taskStatus = profile.orElseThrow(() -> new ProfileValidationServiceException(ResponseCode.VALIDATION_TASK_NOT_FOUND, requestId))
+                .getStatus();
+        ValidationResult validationResult = new ValidationResult();
+        validationResult.setStatus(taskStatus);
+        validationResult.setDisplayStatus(taskStatus.getDisplayStatus());
+        if (ValidationTaskStatus.INVALID.equals(taskStatus)) {
+            validationResult.setReasons(profileValidationSubTaskRepository.findAllByParentTaskId(requestId).stream()
+                    .filter(subTask -> ValidationTaskSubStatus.INVALID.equals(subTask.getStatus()))
+                    .map(ProfileValidationSubTask::getReason).filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+        return validationResult;
     }
 }

@@ -1,4 +1,4 @@
-package com.intuit.craft.builder;
+package com.intuit.craft.convertor;
 
 import com.intuit.craft.dto.UserSubscription;
 import com.intuit.craft.dto.ValidationTaskSubStatus;
@@ -6,9 +6,9 @@ import com.intuit.craft.entities.ProfileValidationSubTask;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProfileValidationSubTaskBuilder {
+public class ProfileValidationSubTaskConvertor extends GenericAbstractConvertor<UserSubscription, ProfileValidationSubTask> {
 
-    public ProfileValidationSubTask build(UserSubscription subscription) {
+    public ProfileValidationSubTask convert(UserSubscription subscription) {
         ProfileValidationSubTask profileValidationSubTask = new ProfileValidationSubTask();
         profileValidationSubTask.setServiceId(subscription.getId());
         profileValidationSubTask.setStatus(ValidationTaskSubStatus.PENDING);

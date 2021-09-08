@@ -6,14 +6,13 @@ import com.intuit.craft.repositories.ProfileValidationTaskRepository;
 import com.intuit.craft.services.ProfileValidationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,9 +24,8 @@ public class FailedProfileValidationsScheduler {
     private final ProfileValidationService profileValidationService;
     private final List<ValidationTaskStatus> statusList = Arrays.asList(ValidationTaskStatus.PENDING, ValidationTaskStatus.IN_PROGRESS);
 
-    private final ExecutorService executorService = Executors.newWorkStealingPool();
-
-    private final List<Integer> delaySeconds = Arrays.asList(30, 2 * 60, 5 * 60, 10 * 60, 30 * 60);
+    @Value("${failed.task.scheduler.delay.time}")
+    private final List<Long> delaySeconds;
 
     @Scheduled(cron = "${failed.task.scheduler.cron.regex}")
     public void execute() {

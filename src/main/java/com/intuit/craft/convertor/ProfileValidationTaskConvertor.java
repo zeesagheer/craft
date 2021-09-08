@@ -1,6 +1,5 @@
-package com.intuit.craft.builder;
+package com.intuit.craft.convertor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.intuit.craft.dto.ValidationTaskStatus;
 import com.intuit.craft.dto.request.ProfileRequest;
 import com.intuit.craft.entities.ProfileValidationTask;
@@ -10,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class ProfileValidationTaskBuilder {
+public class ProfileValidationTaskConvertor extends GenericAbstractConvertor<ProfileRequest, ProfileValidationTask> {
 
     private final JacksonUtils jacksonUtils;
 
-    public ProfileValidationTask build(ProfileRequest request) throws JsonProcessingException {
+    public ProfileValidationTask convert(ProfileRequest request) {
         ProfileValidationTask profileValidationTask = new ProfileValidationTask();
         profileValidationTask.setProfileId(request.getProfileId());
         profileValidationTask.setStatus(ValidationTaskStatus.PENDING);

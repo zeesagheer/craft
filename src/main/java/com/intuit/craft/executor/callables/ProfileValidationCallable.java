@@ -1,6 +1,6 @@
 package com.intuit.craft.executor.callables;
 
-import com.intuit.craft.dto.ValidationResult;
+import com.intuit.craft.dto.SubValidationResult;
 import com.intuit.craft.entities.ProfileValidationSubTask;
 import com.intuit.craft.services.SubscribedProfileValidationService;
 import lombok.AllArgsConstructor;
@@ -11,19 +11,19 @@ import java.util.concurrent.Callable;
 
 @AllArgsConstructor
 @Slf4j
-public class ProfileValidationCallable implements Callable<ValidationResult> {
+public class ProfileValidationCallable implements Callable<SubValidationResult> {
 
     private final ProfileValidationSubTask profileValidationSubTask;
     private final SubscribedProfileValidationService subscribedProfileValidationService;
 
     @Override
-    public ValidationResult call() {
-        ValidationResult validationResult = null;
+    public SubValidationResult call() {
+        SubValidationResult subValidationResult = null;
         try {
-            validationResult = subscribedProfileValidationService.validate(profileValidationSubTask);
+            subValidationResult = subscribedProfileValidationService.validate(profileValidationSubTask);
         } catch (SocketTimeoutException e) {
-            log.error("Exception while validating subTask {}", profileValidationSubTask, e);
+            log.error("Exception occurred while validating subTask {}", profileValidationSubTask, e);
         }
-        return validationResult;
+        return subValidationResult;
     }
 }

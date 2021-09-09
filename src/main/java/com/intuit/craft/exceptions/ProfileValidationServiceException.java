@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
+/**
+ * Profile validation service exception.
+ */
 @Getter
 @ToString
 public class ProfileValidationServiceException extends RuntimeException {
@@ -15,6 +18,8 @@ public class ProfileValidationServiceException extends RuntimeException {
 
 
     /**
+     * Instantiates a new Profile validation service exception.
+     *
      * @param errorCode    : Code for the exception.
      * @param errorMessage : Error message.
      */
@@ -22,12 +27,25 @@ public class ProfileValidationServiceException extends RuntimeException {
         this(errorCode, errorMessage, null);
     }
 
+    /**
+     * Instantiates a new Profile validation service exception.
+     *
+     * @param errorCode    the error code
+     * @param errorMessage the error message
+     * @param httpStatus   the http status
+     */
     public ProfileValidationServiceException(String errorCode, String errorMessage, HttpStatus httpStatus) {
         this.code = errorCode;
         this.message = errorMessage;
         this.httpStatus = httpStatus;
     }
 
+    /**
+     * Instantiates a new Profile validation service exception.
+     *
+     * @param responseCode the response code
+     * @param arguments    the arguments
+     */
     public ProfileValidationServiceException(ResponseCode responseCode, Object... arguments) {
         this(String.valueOf(responseCode.getCode())
                 , String.format(responseCode.getDescription(), arguments)
@@ -35,6 +53,11 @@ public class ProfileValidationServiceException extends RuntimeException {
     }
 
 
+    /**
+     * Instantiates a new Profile validation service exception.
+     *
+     * @param responseCode the response code
+     */
     public ProfileValidationServiceException(ResponseCode responseCode) {
         this(String.valueOf(responseCode.getCode())
                 , responseCode.getDescription()

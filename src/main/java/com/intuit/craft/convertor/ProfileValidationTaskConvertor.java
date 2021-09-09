@@ -7,6 +7,10 @@ import com.intuit.craft.utils.JacksonUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * The type Profile validation task convertor converting
+ * from {@link ProfileRequest} to {@link ProfileValidationTask}.
+ */
 @Component
 @AllArgsConstructor
 public class ProfileValidationTaskConvertor extends GenericAbstractConvertor<ProfileRequest, ProfileValidationTask> {

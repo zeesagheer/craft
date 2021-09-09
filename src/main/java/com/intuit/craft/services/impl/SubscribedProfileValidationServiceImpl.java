@@ -13,6 +13,9 @@ import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Subscribed profile validation service implementation.
+ */
 @Service
 @AllArgsConstructor
 @Slf4j

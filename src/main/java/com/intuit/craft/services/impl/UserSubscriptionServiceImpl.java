@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * User subscription service implementation.
+ */
 @Service
 public class UserSubscriptionServiceImpl implements UserSubscriptionService {
 

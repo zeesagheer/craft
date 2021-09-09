@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.Callable;
 
+/**
+ * Profile validation callable used to call different validation services.
+ */
 @AllArgsConstructor
 @Slf4j
 public class ProfileValidationCallable implements Callable<SubValidationResult> {

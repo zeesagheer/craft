@@ -15,6 +15,9 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * The type Jackson utils.
+ */
 @Component
 public class JacksonUtils {
 
@@ -25,6 +28,9 @@ public class JacksonUtils {
     private ObjectMapper mapper;
     private ObjectMapper nonNullMapper;
 
+    /**
+     * Init mapper.
+     */
     @PostConstruct
     void initMapper() {
         mapper = new ObjectMapper();
@@ -40,8 +46,11 @@ public class JacksonUtils {
     }
 
     /**
-     * @param t
-     * @return
+     * Object to json json node.
+     *
+     * @param <T> the type parameter
+     * @param t   the t
+     * @return json node
      * @throws IOException
      */
     public <T> JsonNode objectToJson(T t) {
@@ -58,8 +67,12 @@ public class JacksonUtils {
     }
 
     /**
-     * @param t
-     * @return
+     * Object to json str string.
+     *
+     * @param <T>            the type parameter
+     * @param t              the t
+     * @param includeNonNull the include non null
+     * @return string
      * @throws IOException
      */
     public <T> String objectToJsonStr(T t, boolean includeNonNull) {
@@ -76,8 +89,11 @@ public class JacksonUtils {
     }
 
     /**
-     * @param t
-     * @return
+     * Object to json str string.
+     *
+     * @param <T> the type parameter
+     * @param t   the t
+     * @return string
      * @throws IOException
      */
     public <T> String objectToJsonStr(T t) {
@@ -88,9 +104,9 @@ public class JacksonUtils {
     /**
      * Method to convert a json string to java object
      *
+     * @param <T>          the type parameter
      * @param jsonInString : json string
      * @param classType    : Java class type
-     * @param <T>
      * @return : Converted java object of type classType
      */
     public <T> T jsonStrToObject(String jsonInString, Class<T> classType) {
@@ -107,8 +123,10 @@ public class JacksonUtils {
 
 
     /**
-     * @param jsonInString
-     * @return
+     * String to json json node.
+     *
+     * @param jsonInString the json in string
+     * @return json node
      * @throws IOException
      */
     public JsonNode stringToJson(String jsonInString) {
@@ -125,6 +143,12 @@ public class JacksonUtils {
         return jsonNode;
     }
 
+    /**
+     * String to object node object node.
+     *
+     * @param jsonInString the json in string
+     * @return the object node
+     */
     public ObjectNode stringToObjectNode(String jsonInString) {
         ObjectNode objectNode = null;
         try {
@@ -138,6 +162,12 @@ public class JacksonUtils {
     }
 
 
+    /**
+     * Is empty json boolean.
+     *
+     * @param jsonStr the json str
+     * @return the boolean
+     */
     public boolean isEmptyJson(String jsonStr) {
         JsonNode jsonNode = jsonStrToObject(jsonStr, JsonNode.class);
         if (jsonNode == null) {
@@ -149,9 +179,9 @@ public class JacksonUtils {
     /**
      * Method to convert a java object to java object
      *
-     * @param object
-     * @param classType  : Java class type
-     * @param <T>
+     * @param <T>       the type parameter
+     * @param object    the object
+     * @param classType : Java class type
      * @return : Converted java object of type classType
      */
     public <T> T objectToObject(Object object, Class<T> classType) {

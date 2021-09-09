@@ -13,6 +13,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.util.StringUtils;
 
+/**
+ * This class defines Dynamo db configuration.
+ */
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.intuit.craft.repositories",
         includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = EnableScan.class))
@@ -27,6 +30,11 @@ public class DynamoDBConfig {
     @Value("${amazon.aws.secretkey}")
     private String amazonAWSSecretKey;
 
+    /**
+     * Amazon dynamo db amazon dynamo db.
+     *
+     * @return the amazon dynamo db
+     */
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
         AmazonDynamoDB amazonDynamoDB = new AmazonDynamoDBClient(amazonAWSCredentials());
@@ -38,6 +46,11 @@ public class DynamoDBConfig {
         return amazonDynamoDB;
     }
 
+    /**
+     * Amazon aws credentials aws credentials.
+     *
+     * @return the aws credentials
+     */
     @Bean
     public AWSCredentials amazonAWSCredentials() {
         return new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey);

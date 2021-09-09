@@ -10,12 +10,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This controller accepts the validation profile tasks submitted by user
+ */
 @RestController
 @AllArgsConstructor
 public class TaskAcceptorController {
 
     private final TaskAcceptorService taskAcceptorService;
 
+    /**
+     * Update profile response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping(value = "/task", consumes = {"application/json"}, produces = {"application/json"}
             , name = "Validates user profile")
     public ResponseEntity<AppAPIWrapper> updateProfile(@RequestBody ProfileRequest request) {

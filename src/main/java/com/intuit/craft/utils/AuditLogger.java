@@ -11,6 +11,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Audit logger.
+ */
 @Slf4j
 @Component
 @AllArgsConstructor
@@ -18,6 +21,12 @@ public class AuditLogger {
 
     private final JacksonUtils jacksonUtils;
 
+    /**
+     * Log request.
+     *
+     * @param httpServletRequest the http servlet request
+     * @param body               the body
+     */
     public void logRequest(HttpServletRequest httpServletRequest, Object body) {
         StringBuilder stringBuilder = new StringBuilder();
         Map<String, String> parameters = buildParametersMap(httpServletRequest);
@@ -38,6 +47,13 @@ public class AuditLogger {
         log.info(stringBuilder.toString());
     }
 
+    /**
+     * Log response.
+     *
+     * @param httpServletRequest  the http servlet request
+     * @param httpServletResponse the http servlet response
+     * @param body                the body
+     */
     public void logResponse(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object body) {
         StringBuilder stringBuilder = new StringBuilder();
 

@@ -11,6 +11,9 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAd
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Type;
 
+/**
+ * The type Audit request body advice adapter.
+ */
 @ControllerAdvice
 @AllArgsConstructor
 public class AuditRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {

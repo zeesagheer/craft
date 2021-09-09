@@ -9,9 +9,17 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.TimeZone;
 
+/**
+ * Default object mapper configuration
+ */
 @Configuration
 public class MapperConfig {
 
+    /**
+     * Object mapper object mapper.
+     *
+     * @return the object mapper
+     */
     @Bean(name = {"objectMapper", "mapper"})
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

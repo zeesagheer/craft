@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 
+/**
+ * The type Audit response body advice adapter.
+ */
 @ControllerAdvice
 @AllArgsConstructor
 public class AuditResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object> {

@@ -1,8 +1,8 @@
 package com.intuit.craft.services.impl;
 
 import com.intuit.craft.convertor.Convertor;
-import com.intuit.craft.dto.UserSubscription;
 import com.intuit.craft.dto.SubValidationResult;
+import com.intuit.craft.dto.UserSubscription;
 import com.intuit.craft.dto.ValidationTaskStatus;
 import com.intuit.craft.dto.ValidationTaskSubStatus;
 import com.intuit.craft.entities.ProfileValidationSubTask;
@@ -22,6 +22,9 @@ import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+/**
+ * Profile validation service implementation.
+ */
 @Slf4j
 @Service
 @AllArgsConstructor

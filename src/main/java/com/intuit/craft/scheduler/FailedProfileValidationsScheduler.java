@@ -15,6 +15,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Failed profile validations scheduler, it runs using configured cron expression
+ * to retry the failed subtasks.
+ */
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -27,6 +31,9 @@ public class FailedProfileValidationsScheduler {
     @Value("${failed.task.scheduler.delay.time}")
     private final List<Long> delaySeconds;
 
+    /**
+     * Execute.
+     */
     @Scheduled(cron = "${failed.task.scheduler.cron.regex}")
     public void execute() {
         log.info("Initiating failed tasks scheduler");

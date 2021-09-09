@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * Profile validation task to store and update overall status of task.
+ */
 @Data
 @DynamoDBTable(tableName = "ProfileValidationTaskTable")
 public class ProfileValidationTask {

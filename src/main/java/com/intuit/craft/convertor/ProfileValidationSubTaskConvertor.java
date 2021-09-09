@@ -5,6 +5,10 @@ import com.intuit.craft.dto.ValidationTaskSubStatus;
 import com.intuit.craft.entities.ProfileValidationSubTask;
 import org.springframework.stereotype.Component;
 
+/**
+ * The type Profile validation sub task convertor converting
+ * from {@link UserSubscription} to {@link ProfileValidationSubTask}.
+ */
 @Component
 public class ProfileValidationSubTaskConvertor extends GenericAbstractConvertor<UserSubscription, ProfileValidationSubTask> {
 

@@ -4,6 +4,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.intuit.craft.dto.ValidationTaskSubStatus;
 import lombok.Data;
 
+/**
+ * Profile validation sub task to hold info of
+ * validation status after validating with respective services.
+ */
 @Data
 @DynamoDBTable(tableName = "ProfileValidationSubTaskTable")
 public class ProfileValidationSubTask {

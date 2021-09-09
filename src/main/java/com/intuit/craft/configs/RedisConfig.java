@@ -10,10 +10,18 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
 
+/**
+ * This class defines Redis configurations.
+ */
 @Configuration
 @EnableCaching
 public class RedisConfig {
 
+    /**
+     * Cache configuration redis cache configuration.
+     *
+     * @return the redis cache configuration
+     */
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {
         return RedisCacheConfiguration.defaultCacheConfig()
@@ -22,6 +30,11 @@ public class RedisConfig {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }
 
+    /**
+     * Redis cache manager builder customizer redis cache manager builder customizer.
+     *
+     * @return the redis cache manager builder customizer
+     */
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return (builder) -> builder
